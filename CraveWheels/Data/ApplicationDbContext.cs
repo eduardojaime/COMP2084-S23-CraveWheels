@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using CraveWheels.Models;
 
 namespace CraveWheels.Data
 {
@@ -9,5 +10,6 @@ namespace CraveWheels.Data
             : base(options)
         {
         }
+        public DbSet<CraveWheels.Models.Product> Product { get; set; } = default!;
     }
 }
