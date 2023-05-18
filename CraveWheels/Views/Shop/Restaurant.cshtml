@@ -1,5 +1,14 @@
-﻿@{
+﻿@model IEnumerable<CraveWheels.Models.Product>
+
+@{
     ViewData["Title"] = ViewData["Name"];
 }
 
 <h1>Find Great Food at @ViewData["Name"]</h1>
+
+<ul>
+    @foreach (var product in Model)
+    {
+        <li>@product.Name</li>
+    }
+</ul>
