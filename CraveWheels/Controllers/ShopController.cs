@@ -10,8 +10,14 @@ namespace CraveWheels.Controllers
         }
 
         // GET: /Shop/Restaurant
-        public IActionResult Restaurant()
+        public IActionResult Restaurant(string Name)
         {
+            if (Name == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            ViewData["Name"] = Name;
             return View();
         }
     }

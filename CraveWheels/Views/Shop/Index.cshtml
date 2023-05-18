@@ -4,21 +4,42 @@
 
 <h1>Our Restaurant Partners</h1>
 
-<ul>
-    <li>
-        <a asp-controller="Shop" asp-action="Restaurant">
-            Restaurant 1
-        </a>
-    </li>
-    <li>
-        <a asp-controller="Shop" asp-action="Restaurant">
-            Restaurant 2
-        </a>
-    </li>
-    <li>
-        <a asp-controller="Shop" asp-action="Restaurant">
-            Restaurant 3
-        </a>
-    </li>
-</ul>
+<section class="row card-group">
+    <article class="col-lg-4 mb-3">
+        <div class="card mb-4">
+            <div class="card-body text-center h-200">
+                <a asp-controller="Shop" asp-action="Restaurant" asp-route-Name="Taj Bistro">
+                    Taj Bistro
+                </a>
+            </div>
+        </div>
+    </article>
+    <article class="col-lg-4 mb-3">
+        <div class="card mb-4">
+            <div class="card-body text-center h-200">
+                <a asp-controller="Shop" asp-action="Restaurant" asp-route-Name="Sakana House">
+                    Sakana House
+                </a>
+            </div>
+        </div>
+    </article>
+    <article class="col-lg-4 mb-3">
+        <div class="card mb-4">
+            <div class="card-body text-center h-200">
+                <a asp-controller="Shop" asp-action="Restaurant" asp-route-Name="Beertown">
+                    Beertown
+                </a>
+            </div>
+        </div>
+    </article>
+    <article class="col-lg-4 mb-3">
+        <div class="card mb-4">
+            <div class="card-body text-center h-200">
+                <a asp-controller="Shop" asp-action="Restaurant" asp-route-Name="The Last Class">
+                    The Last Class
+                </a>
+            </div>
+        </div>
+    </article>
+</section>
 
