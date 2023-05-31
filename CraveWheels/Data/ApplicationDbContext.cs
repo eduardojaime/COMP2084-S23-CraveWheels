@@ -10,6 +10,12 @@ namespace CraveWheels.Data
             : base(options)
         {
         }
-        public DbSet<CraveWheels.Models.Product> Product { get; set; } = default!;
+
+        // DbSets to perform CRUD for each model
+        public DbSet<Product> Products { get; set; } = default!;
+        public DbSet<Restaurant> Restaurants { get; set;} = default!;
+        public DbSet<CartItem> CartItems { get; set; } = default!;
+        public DbSet<Order> Orders { get; set; } = default!;
+        public DbSet<OrderDetail> OrderDetails { get; set; } = default!;
     }
 }
