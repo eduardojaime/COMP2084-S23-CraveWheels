@@ -9,5 +9,12 @@ namespace CraveWheels.Models
 
         [Range(0.01, 10000)]
         public decimal Price { get; set; }
+
+        // Parent Reference
+        public int RestaurantId { get; set; }
+        public Restaurant? Restaurant { get; set; } = default!;
+
+        // Child Reference
+        public List<CartItem>? CartItems { get; set; }
     }
 }

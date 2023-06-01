@@ -17,5 +17,8 @@ namespace CraveWheels.Models
 
         [Required]
         public int ProductId { get; set; }
+
+        // Parent
+        public Product? Product { get; set; } = default!;    
     }
 }

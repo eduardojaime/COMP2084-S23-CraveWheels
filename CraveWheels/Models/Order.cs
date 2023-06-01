@@ -45,5 +45,10 @@ namespace CraveWheels.Models
         [Display(Name = "Email")]
         [MaxLength(100)]
         public string CustomerId { get; set; }
+
+        // References
+        public Restaurant? Restaurant { get; set; } = default!;
+        public List<OrderDetail>? OrderDetails { get; set; }
+
     }
 }
