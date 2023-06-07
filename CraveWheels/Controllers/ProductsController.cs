@@ -22,7 +22,10 @@ namespace CraveWheels.Controllers
         // GET: Products
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Products.Include(p => p.Restaurant);
+            // add sorting to query, first by Restaurant Name, then by Product Name after
+            var applicationDbContext = _context.Products.Include(p => p.Restaurant)
+                .OrderBy(p => p.Restaurant.Name)
+                .ThenBy(p => p.Name);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -48,7 +51,7 @@ namespace CraveWheels.Controllers
         // GET: Products/Create
         public IActionResult Create()
         {
-            ViewData["RestaurantId"] = new SelectList(_context.Restaurants, "Id", "Name");
+            ViewData["RestaurantId"] = new SelectList(_context.Restaurants.OrderBy(r => r.Name), "Id", "Name");
             return View();
         }
 
@@ -57,10 +60,16 @@ namespace CraveWheels.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ProductId,Name,Price,RestaurantId")] Product product)
+        public async Task<IActionResult> Create([Bind("ProductId,Name,Price,RestaurantId")] Product product, IFormFile? Photo)
         {
             if (ModelState.IsValid)
             {
+                // photo upload if any
+                if (Photo != null)
+                {
+                    // call our upload method and store the unique name it send back
+                }
+
                 _context.Add(product);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -163,6 +172,26 @@ namespace CraveWheels.Controllers
         private bool ProductExists(int id)
         {
           return (_context.Products?.Any(e => e.ProductId == id)).GetValueOrDefault();
+        }
+
+        // file upload, can be called from both Create and Edit POST
+        private static string UploadPhoto(IFormFile Photo)
+        {
+            // get temp location of upload
+            var filePath = Path.GetTempFileName();
+
+            // use GUID class to generate unique name.  e.g. food.jpg => a348908sdaf-food.jpg
+            var fileName = Guid.NewGuid().ToString() + "-" + Photo.FileName;
+
+            // set destination path dynamically so it works on any server
+            var uploadPath = System.IO.Directory.GetCurrentDirectory() + "\\wwwroot\\img\\products\\" + fileName;
+
+            using (var stream = new FileStream(uploadPath, FileMode.Create))
+            {
+                Photo.CopyTo(stream);
+            }
+
+            return fileName;
         }
     }
 }
