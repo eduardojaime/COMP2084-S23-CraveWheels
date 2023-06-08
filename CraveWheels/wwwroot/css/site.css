@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300&display=swap');
+
 html {
   font-size: 14px;
 }
@@ -18,7 +20,8 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+    font-family: 'Inter', sans-serif;
 }
 
 table.sortable th:hover {
@@ -27,4 +30,26 @@ table.sortable th:hover {
 
 .thumb {
     width: 75px;
+}
+
+.btn-primary {
+    background-color: #CDDC39;
+    color: #212121;
+}
+
+.btn-primary:hover {
+    background-color: #AFB42B;
+    color: #212121;
+}
+
+a {
+    color: #757575;
+}
+
+a:hover {
+    color: #212121;
+}
+
+.navbar-light {
+    background-color: #F0F4C3;
 }
