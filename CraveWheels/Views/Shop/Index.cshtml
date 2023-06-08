@@ -1,11 +1,26 @@
-﻿@{
+﻿@model IEnumerable<CraveWheels.Models.Restaurant>
+
+@{
     ViewData["Title"] = "Our Restaurant Partners";
 }
 
 <h1>Our Restaurant Partners</h1>
 
 <section class="row card-group">
-    <article class="col-lg-4 mb-3">
+    @foreach (var r in Model)
+    {
+        <article class="col-lg-4 mb-3">
+            <div class="card mb-4">
+                <div class="card-body text-center h-200">
+                    <a asp-controller="Shop" asp-action="Restaurant" asp-route-id="@r.Id">
+                        @r.Name
+                    </a>
+                </div>
+            </div>
+        </article>
+    }
+
+    @* <article class="col-lg-4 mb-3">
         <div class="card mb-4">
             <div class="card-body text-center h-200">
                 <a asp-controller="Shop" asp-action="Restaurant" asp-route-Name="Taj Bistro">
@@ -40,6 +55,6 @@
                 </a>
             </div>
         </div>
-    </article>
+    </article>*@
 </section>
 
