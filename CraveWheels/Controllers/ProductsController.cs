@@ -68,6 +68,8 @@ namespace CraveWheels.Controllers
                 if (Photo != null)
                 {
                     // call our upload method and store the unique name it send back
+                    var fileName = UploadPhoto(Photo);
+                    product.Photo = fileName;
                 }
 
                 _context.Add(product);
@@ -91,7 +93,7 @@ namespace CraveWheels.Controllers
             {
                 return NotFound();
             }
-            ViewData["RestaurantId"] = new SelectList(_context.Restaurants, "Id", "Name", product.RestaurantId);
+            ViewData["RestaurantId"] = new SelectList(_context.Restaurants.OrderBy(r => r.Name), "Id", "Name", product.RestaurantId);
             return View(product);
         }
 
@@ -100,7 +102,7 @@ namespace CraveWheels.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ProductId,Name,Price,RestaurantId")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("ProductId,Name,Price,RestaurantId")] Product product, IFormFile? Photo, string? CurrentPhoto)
         {
             if (id != product.ProductId)
             {
@@ -111,6 +113,18 @@ namespace CraveWheels.Controllers
             {
                 try
                 {
+                    // upload photo if any BEFORE update & save
+                    if (Photo != null)
+                    {
+                        var fileName = UploadPhoto(Photo);
+                        product.Photo = fileName;
+                    }
+                    else
+                    {
+                        // keep the current photo
+                        product.Photo = CurrentPhoto;
+                    }
+
                     _context.Update(product);
                     await _context.SaveChangesAsync();
                 }

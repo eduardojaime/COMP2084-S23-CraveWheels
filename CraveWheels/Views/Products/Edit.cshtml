@@ -1,16 +1,15 @@
 ﻿@model CraveWheels.Models.Product
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Product";
 }
 
-<h1>Edit</h1>
+<h1>Edit Product</h1>
 
-<h4>Product</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="ProductId" />
             <div class="form-group">
@@ -24,13 +23,22 @@
                 <span asp-validation-for="Price" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="RestaurantId" class="control-label"></label>
+                <label for="Restaurant" class="control-label">Restaurant</label>
                 <select asp-for="RestaurantId" class="form-control" asp-items="ViewBag.RestaurantId"></select>
                 <span asp-validation-for="RestaurantId" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label class="control-label" for="Photo">Photo</label>
+                <input type="file" name="Photo" accept=".jpg,.png" class="form-control" />
+                @if (Model.Photo != null)
+                {
+                    <img src="~/img/products/@Model.Photo" alt="Product Photo" />
+                }
+            </div>
+            <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
+            <input type="hidden" name="CurrentPhoto" value="@Model.Photo" />
         </form>
     </div>
 </div>

@@ -24,3 +24,7 @@ body {
 table.sortable th:hover {
     cursor: pointer;
 }
+
+.thumb {
+    width: 75px;
+}
