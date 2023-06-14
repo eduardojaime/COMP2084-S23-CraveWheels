@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CraveWheels.Data;
 using CraveWheels.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CraveWheels.Controllers
 {
+    [Authorize]
     public class RestaurantsController : Controller
     {
         private readonly ApplicationDbContext _context;
