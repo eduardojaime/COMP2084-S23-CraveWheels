@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace CraveWheels.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Administrator")]
     public class RestaurantsController : Controller
     {
         private readonly ApplicationDbContext _context;
