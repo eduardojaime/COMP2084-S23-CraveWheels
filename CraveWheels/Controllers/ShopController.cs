@@ -33,7 +33,9 @@ namespace CraveWheels.Controllers
             }
 
             // fetch products for selected Restaurant
-            var products = _context.Products.Where(p => p.RestaurantId == id).OrderBy(p => p.Name).ToList();
+            var products = _context.Products
+                .Where(p => p.RestaurantId == id) // Category
+                .OrderBy(p => p.Name).ToList();
 
             ViewData["Name"] = _context.Restaurants.Find(id).Name;
             return View(products);

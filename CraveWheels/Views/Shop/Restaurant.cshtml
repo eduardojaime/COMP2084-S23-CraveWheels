@@ -5,10 +5,43 @@
 }
 
 <h1>Find Great Food at @ViewData["Name"]</h1>
-
+@*
 <ul>
     @foreach (var product in Model)
     {
         <li>@product.Name</li>
     }
 </ul>
+*@
+<section class="row card-group">
+    @*show card for each item*@
+    @foreach (var product in Model)
+    {
+        <div class="col-lg-4 mb-3">
+            <div class="card mb-4">
+                <div class="card-body text-center h-100">
+                    @if (String.IsNullOrEmpty(product.Photo))
+                    {
+                        // No Photo
+                        <img src="~/img/products/placeholder.gif" alt="Placeholder Image"
+                            class="img-thumbnail" style="max-width: 250px"
+                        />
+                    }
+                    else
+                    {
+                        // With Photo
+                        <img src="~/img/products/@product.Photo" alt="Photo of @product.Name"
+                             class="img-thumbnail" style="max-width: 250px" />
+                    }
+                    <br />
+                    <a asp-controller="Products" asp-action="Details" asp-route-id="@product.ProductId">
+                        @product.Name
+                    </a>
+                    <br />
+                    <h6>@product.Price.ToString("C")</h6>
+                    @*TODO: ADD BUTTON TO ADD TO CART*@
+                </div>
+            </div>
+        </div>
+    }
+</section>
