@@ -1,6 +1,7 @@
 ﻿using CraveWheels.Data;
 using CraveWheels.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 
 namespace CraveWheels.Controllers
 {
@@ -41,24 +42,50 @@ namespace CraveWheels.Controllers
             return View(products);
         }
 
-        //public IActionResult Restaurant(string Name)
-        //{
-        //    if (Name == null)
-        //    {
-        //        return RedirectToAction("Index");
-        //    }
+        // POST: /Shop/AddToCart
+        public IActionResult AddToCart([FromForm] int ProductId, [FromForm] int Quantity) {
+            // retrieve Id to identify the current user session
+            var customerId = GetCustomerId();
+            // retrieve price from db
+            var price = _context.Products.Find(ProductId).Price;
+            // create and save cart object
+            var cart = new CartItem()
+            {
+                ProductId = ProductId,
+                Quantity = Quantity,
+                Price = price,
+                CustomerId = customerId
+            };
+            // save changes to the db
+            _context.CartItems.Add(cart);
+            _context.SaveChanges();
+            // redirect to /Shop/Cart
+            return Redirect("Cart");
+        }
 
-        //    // use the Product model to make a mock list of products to display
-        //    var products = new List<Product>();
-
-        //    for (var i = 1; i < 11; i++)
-        //    {
-        //        products.Add(new Product {  ProductId = i, Name = "Product " + i.ToString(), Price = 10 + i });
-        //    }
-
-        //    ViewData["Name"] = Name;
-        //    // load the view and pass it the list of products we just made
-        //    return View(products);
-        //}
+        // Helper Method
+        // Retrieves or generates ID to identify user
+        private string GetCustomerId()
+        {
+            // variable to store the ID temporarily
+            string customerId = string.Empty;
+            // check the session object for a customer id
+            if (String.IsNullOrEmpty(HttpContext.Session.GetString("CustomerId")))
+            {
+                // if user is authenticated, use email
+                if (User.Identity.IsAuthenticated)
+                {
+                    customerId = User.Identity.Name;
+                }
+                // else use a GUID
+                else {
+                    customerId = Guid.NewGuid().ToString();
+                }
+                // update session value
+                HttpContext.Session.SetString("CustomerId", customerId);
+            }
+            // return whatever value is in the session object
+            return HttpContext.Session.GetString("CustomerId");
+        }
     }
 }

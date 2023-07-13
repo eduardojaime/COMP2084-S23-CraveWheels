@@ -39,7 +39,18 @@
                     </a>
                     <br />
                     <h6>@product.Price.ToString("C")</h6>
-                    @*TODO: ADD BUTTON TO ADD TO CART*@
+                    @*Form elements allow us to send info back to the server*@
+                    <form method="post" action="/Shop/AddToCart">
+                        @*capture productid*@
+                        <input type="hidden" id="ProductId" name="ProductId" value="@product.ProductId"/>
+                        @*capture quantity*@
+                        <fieldset>
+                            <label class="form-control" for="Quantity">Qty: </label>
+                            <input name="Quantity" id="Quantity" required type="number" min="1" max="99"/>
+                        </fieldset>
+                        @*button triggers post request back to server*@
+                        <button class="btn btn-primary">Add to Cart</button>
+                    </form>
                 </div>
             </div>
         </div>
