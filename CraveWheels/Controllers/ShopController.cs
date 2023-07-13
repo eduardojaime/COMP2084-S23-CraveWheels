@@ -2,6 +2,7 @@
 using CraveWheels.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CraveWheels.Controllers
 {
@@ -43,7 +44,8 @@ namespace CraveWheels.Controllers
         }
 
         // POST: /Shop/AddToCart
-        public IActionResult AddToCart([FromForm] int ProductId, [FromForm] int Quantity) {
+        public IActionResult AddToCart([FromForm] int ProductId, [FromForm] int Quantity)
+        {
             // retrieve Id to identify the current user session
             var customerId = GetCustomerId();
             // retrieve price from db
@@ -63,6 +65,21 @@ namespace CraveWheels.Controllers
             return Redirect("Cart");
         }
 
+        // GET: /Shop/Cart
+        public IActionResult Cart()
+        {
+            // get customerid
+            var customerId = GetCustomerId();
+            // get cart items as a list
+            var cartItems = _context.CartItems
+                // method chaining
+                .Where(c => c.CustomerId == customerId)
+                .OrderByDescending(c => c.Product.Name)
+                .ToList();
+            // return list to view
+            return View(cartItems);
+        }
+
         // Helper Method
         // Retrieves or generates ID to identify user
         private string GetCustomerId()
@@ -78,7 +95,8 @@ namespace CraveWheels.Controllers
                     customerId = User.Identity.Name;
                 }
                 // else use a GUID
-                else {
+                else
+                {
                     customerId = Guid.NewGuid().ToString();
                 }
                 // update session value
