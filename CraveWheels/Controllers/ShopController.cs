@@ -13,11 +13,13 @@ namespace CraveWheels.Controllers
     {
         // db connection
         private readonly ApplicationDbContext _context;
+        private readonly IConfiguration _configuration;
 
         // constructor that requires an instance of the db connection
-        public ShopController(ApplicationDbContext context)
+        public ShopController(ApplicationDbContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration; // Loads app settings values as an object
         }
 
         public IActionResult Index()
@@ -137,7 +139,18 @@ namespace CraveWheels.Controllers
             return RedirectToAction("Payment");
         }
 
-        // TODO: Add Payment action method
+        public IActionResult Payment() {
+            // retrieve order to get total amount
+            var order = HttpContext.Session.GetObject<Models.Order>("Order");
+            // pass total amount to view
+            ViewBag.Total = order.OrderTotal;
+            // pass publishable key to view in order to use the JS code
+            ViewBag.PublishableKey = _configuration["Payments:Stripe:PublishableKey"];
+            // return view
+            return View();
+        }
+
+        // TODO: Payment POST method > create payment session and return session id for js to redirect
 
         // Helper Method
         // Retrieves or generates ID to identify user
