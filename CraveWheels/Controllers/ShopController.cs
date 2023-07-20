@@ -3,6 +3,8 @@ using CraveWheels.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
+using Azure.Identity;
 
 namespace CraveWheels.Controllers
 {
@@ -71,14 +73,33 @@ namespace CraveWheels.Controllers
             // get customerid
             var customerId = GetCustomerId();
             // get cart items as a list
-            var cartItems = _context.CartItems
+            var cartItems = _context.CartItems // SELECT* FROM CartItems c
+                .Include(c => c.Product) // JOIN Products p ON c.ProductId = p.ProductId
                 // method chaining
-                .Where(c => c.CustomerId == customerId)
-                .OrderByDescending(c => c.Product.Name)
+                .Where(c => c.CustomerId == customerId) // WHERE CustomerId = @ 
+                .OrderByDescending(c => c.Product.Name) // ORDER BY p.Name DESC
                 .ToList();
             // return list to view
+            // TODO: calculate total amount of cart and return to view
+            // SELECT SUM(c.Price) FROM CartItems c
+            var total = cartItems.Sum(c => c.Price).ToString("C"); 
+            ViewBag.TotalAmount = total;
+
             return View(cartItems);
         }
+
+        public IActionResult RemoveFromCart(int id) { 
+            // find cartitem 
+            var cartItem = _context.CartItems.Find(id);
+            // remove from db
+            _context.CartItems.Remove(cartItem);
+            // save changes
+            _context.SaveChanges();
+            // redirect back to cart page
+            return RedirectToAction("Cart");
+        }
+
+        // TODO: Protected Checkout > only authenticated users can complete a purchase
 
         // Helper Method
         // Retrieves or generates ID to identify user
