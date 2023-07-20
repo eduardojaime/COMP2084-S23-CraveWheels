@@ -75,20 +75,21 @@ namespace CraveWheels.Controllers
             // get cart items as a list
             var cartItems = _context.CartItems // SELECT* FROM CartItems c
                 .Include(c => c.Product) // JOIN Products p ON c.ProductId = p.ProductId
-                // method chaining
+                                         // method chaining
                 .Where(c => c.CustomerId == customerId) // WHERE CustomerId = @ 
                 .OrderByDescending(c => c.Product.Name) // ORDER BY p.Name DESC
                 .ToList();
             // return list to view
             // TODO: calculate total amount of cart and return to view
             // SELECT SUM(c.Price) FROM CartItems c
-            var total = cartItems.Sum(c => c.Price).ToString("C"); 
+            var total = cartItems.Sum(c => c.Price).ToString("C");
             ViewBag.TotalAmount = total;
 
             return View(cartItems);
         }
 
-        public IActionResult RemoveFromCart(int id) { 
+        public IActionResult RemoveFromCart(int id)
+        {
             // find cartitem 
             var cartItem = _context.CartItems.Find(id);
             // remove from db
@@ -100,6 +101,43 @@ namespace CraveWheels.Controllers
         }
 
         // TODO: Protected Checkout > only authenticated users can complete a purchase
+        [Authorize]
+        public IActionResult Checkout()
+        {
+            return View();
+        }
+
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken] // ties the form that was loaded in the GET version of this method
+        // to this POST request
+        public IActionResult Checkout(
+            [Bind("FirstName, LastName, Address, City, Province, PostalCode")] Models.Order order)
+        {
+            // populate order date
+            order.OrderDate = DateTime.UtcNow; // BEST PRACTICE
+            order.CustomerId = GetCustomerId();
+            // calculate totals
+            var cartItems = _context.CartItems // SELECT* FROM CartItems c
+                .Include(c => c.Product) // JOIN Products p ON c.ProductId = p.ProductId
+                                         // method chaining
+                .Where(c => c.CustomerId == order.CustomerId) // WHERE CustomerId = @ 
+                .OrderByDescending(c => c.Product.Name) // ORDER BY p.Name DESC
+                .ToList();
+            // return list to view
+            // TODO: calculate total amount of cart and return to view
+            // SELECT SUM(c.Price) FROM CartItems c
+            decimal total = cartItems.Sum(c => c.Price);
+            order.OrderTotal = total;
+            // store in session object, this will allow me to load this object after user pays
+            // TODO: EXTEND THE SESSION OBJECT
+
+            // redirect to payment page
+            return RedirectToAction("Payment");
+        }
+
+        // TODO: Add Payment action method
 
         // Helper Method
         // Retrieves or generates ID to identify user
