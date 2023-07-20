@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Azure.Identity;
+using CraveWheels.Extensions;
 
 namespace CraveWheels.Controllers
 {
@@ -131,8 +132,7 @@ namespace CraveWheels.Controllers
             decimal total = cartItems.Sum(c => c.Price);
             order.OrderTotal = total;
             // store in session object, this will allow me to load this object after user pays
-            // TODO: EXTEND THE SESSION OBJECT
-
+            HttpContext.Session.SetObject("Order", order); // this is a temporary value
             // redirect to payment page
             return RedirectToAction("Payment");
         }
