@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Azure.Identity;
 using CraveWheels.Extensions;
+using Stripe;
+using Stripe.Checkout;
+using System.Collections.Specialized;
 
 namespace CraveWheels.Controllers
 {
@@ -103,7 +106,7 @@ namespace CraveWheels.Controllers
             return RedirectToAction("Cart");
         }
 
-        // TODO: Protected Checkout > only authenticated users can complete a purchase
+        // Protected Checkout > only authenticated users can complete a purchase
         [Authorize]
         public IActionResult Checkout()
         {
@@ -150,7 +153,74 @@ namespace CraveWheels.Controllers
             return View();
         }
 
-        // TODO: Payment POST method > create payment session and return session id for js to redirect
+        // Payment POST method > create payment session and return session id for js to redirect
+        [HttpPost]
+        public IActionResult Payment(string stripeToken) {
+            // retrieve order object from session variable
+            var order = HttpContext.Session.GetObject<Models.Order>("Order");
+            // install and import Stripe and Stripe.Checkout packages
+            // retrieve stripe config key
+            StripeConfiguration.ApiKey = _configuration["Payments:Stripe:SecretKey"];
+            // create a session options object for Stripe
+            var options = new SessionCreateOptions
+            {
+                LineItems = new List<SessionLineItemOptions> { 
+                    new SessionLineItemOptions
+                    {
+                        PriceData = new SessionLineItemPriceDataOptions
+                        { 
+                            UnitAmount = (long?)(order.OrderTotal * 100),
+                            Currency = "cad",
+                            ProductData = new SessionLineItemPriceDataProductDataOptions
+                            { 
+                                Name="Food Order"
+                            },
+                        },
+                        Quantity = 1
+                    },
+                },
+                PaymentMethodTypes = new List<string> { "card" },
+                Mode="payment",
+                SuccessUrl = $"https://{Request.Host}/Shop/SaveOrder",
+                CancelUrl = $"https://{Request.Host}/Shop/Cart",
+            };
+            // create a stripe service object to initialize the session in Stripe platform
+            var service = new SessionService();
+            Session session = service.Create(options);
+            // pass an id back to the view to handle a redirect via javascript
+            return Json(new { id = session.Id }); // creates a dynamic object
+        }
+
+        // GET /Shop/SaveOrder
+        public IActionResult SaveOrder() {
+            // retrieve order from session
+            var order = HttpContext.Session.GetObject<Models.Order>("Order");
+            // save order in db
+            _context.Orders.Add(order);
+            _context.SaveChanges();
+            // retrieve cart items
+            var customerId = GetCustomerId();
+            var cartItems = _context.CartItems.Where(c => c.CustomerId == customerId).ToList();
+            // store them as order items
+            foreach (var item in cartItems) {
+                var orderDetail = new OrderDetail
+                {
+                    OrderId = order.OrderId,
+                    ProductId = item.ProductId,
+                    Quantity = item.Quantity,
+                    Price = item.Price
+                };
+                _context.OrderDetails.Add(orderDetail);
+            }
+            _context.SaveChanges();
+            // clear cart
+            foreach (var item in cartItems) {
+                _context.CartItems.Remove(item);
+            }
+            _context.SaveChanges();
+            // redirect to /Orders/Details
+            return RedirectToAction("Details", "Orders", new { @id = order.OrderId });
+        }
 
         // Helper Method
         // Retrieves or generates ID to identify user

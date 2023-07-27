@@ -1,4 +1,6 @@
 ﻿<h1>Confirm Amount for Payment</h1>
+
+<h2>Total to Pay: @ViewBag.Total.ToString("C")</h2>
 <!-- Reference the API at the top of your page -->
 <script src="https://js.stripe.com/v3/"></script>
 
@@ -11,13 +13,14 @@
     var stripe = Stripe("@ViewBag.PublishableKey");
     var checkoutButton = document.getElementById("checkout-button");
     checkoutButton.addEventListener("click", function () {
-        fetch("/Store/Payment", {
+        fetch("/Shop/Payment", {
             method: "POST"
         })
             .then(function (response) {
                 return response.json();
             })
             .then(function (session) {
+                // javascript redirect to Stripe.com
                 return stripe.redirectToCheckout({ sessionId: session.id });
             })
             .then(function (result) {
