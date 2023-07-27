@@ -12,8 +12,6 @@ namespace CraveWheels.Models
         [Display(Name = "Order Total")]
         public decimal OrderTotal { get; set; }
 
-        public int RestaurantId { get; set; }
-
         [Required]
         [Display(Name = "First Name")]
         [MaxLength(50)]
@@ -47,7 +45,6 @@ namespace CraveWheels.Models
         public string CustomerId { get; set; }
 
         // References
-        public Restaurant? Restaurant { get; set; } = default!;
         public List<OrderDetail>? OrderDetails { get; set; }
 
     }

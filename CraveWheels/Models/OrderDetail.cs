@@ -18,6 +18,9 @@ namespace CraveWheels.Models
         [Required]
         public int ProductId { get; set; }
 
+        // refence to Products object
+        public Product Product { get; set; }
+
         // Parent
         public Order? Order { get; set; } = default!;
     }

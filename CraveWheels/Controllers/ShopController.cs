@@ -195,6 +195,8 @@ namespace CraveWheels.Controllers
         public IActionResult SaveOrder() {
             // retrieve order from session
             var order = HttpContext.Session.GetObject<Models.Order>("Order");
+            // Bug > TODO fix restaurantId
+            // order.RestaurantId = _context.Restaurants.FirstOrDefault().Id; // get whichever restaurant
             // save order in db
             _context.Orders.Add(order);
             _context.SaveChanges();

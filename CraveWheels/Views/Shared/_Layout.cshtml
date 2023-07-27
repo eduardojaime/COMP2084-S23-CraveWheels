@@ -25,6 +25,9 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-controller="Shop" asp-action="Cart">Your Cart</a> 
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Orders" asp-action="Index">Your Orders</a>
+                        </li>
                         @if (User.IsInRole("Administrator"))
                         {
                              <li class="nav-item">
