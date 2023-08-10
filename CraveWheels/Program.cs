@@ -24,6 +24,7 @@ builder.Services.AddAuthentication()
 
 // Register the session service
 builder.Services.AddSession();
+builder.Services.AddSwaggerGen(); // adds SwaggerUI service
 
 var app = builder.Build();
 
@@ -38,6 +39,9 @@ else
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 // tell app to use session services
 app.UseSession();
